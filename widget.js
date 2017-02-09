@@ -1670,7 +1670,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
 
                 // this lets the cnc controller know we started jogging
                 // the controller may or may not care
-                if (!isjogging && evt.which > 30 && evt.which < 41) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if ((!isjogging && evt.which > 30 && evt.which < 41) && (!isjogging && evt.which == 107) && (!isjogging && evt.which ==109)) {
                     isjogging = true;
                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogstart', "");
                 }
@@ -1679,7 +1680,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 that.accelBaseValHilite(evt);
 
                 // if this keydown event does not contain a relevant keypress then just exit
-                if (!(evt.which > 30 && evt.which < 41)) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if (!(evt.which > 30 && evt.which < 41) && !(evt.which == 107) && !(evt.which == 109)) {
                     //console.log("exiting cuz not arrow key. evt:", evt);
                     return;
                 } else {
@@ -1741,8 +1743,20 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                     // page down
                     direction = "Z-";
                     $('#com-chilipeppr-widget-xyz-ftr .jogzneg').addClass("hilite");
+                
+					// Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+				} else if (key == 109) {
+                    // minus(-)
+                    direction = "A-";
+                    $('#com-chilipeppr-widget-xyz-ftr .joganeg').addClass("hilite");
+                
+				} else if (key == 107) {
+                    // plus(+)
+                    direction = "A+";
+                    $('#com-chilipeppr-widget-xyz-ftr .joga').addClass("hilite");
                 }
 
+                
                 if (direction) {
                     //that.jog(direction, isFast, is100xFast, is1000xFast, is10000xFast);
                     that.jog(direction);
@@ -1758,7 +1772,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 }
 
                 // test if keys that represent real jog (i.e. not shift/ctrl/alt, etc)
-                if (evt.which > 30 && evt.which < 41) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if ((evt.which > 30 && evt.which < 41)||(evt.which == 107)||(evt.which == 109)) {
                     // let parent method know jogging is done
                     isjogging = false;
 
@@ -1789,7 +1804,14 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                     // page down
                     $('#com-chilipeppr-widget-xyz-ftr .jogzneg').removeClass("hilite");
                 }
-
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <---------------
+                } else if (key == 109) {
+                    // minus (-)
+                    $('#com-chilipeppr-widget-xyz-ftr .joganeg').removeClass("hilite");
+                } else if (key == 107) {
+                    // plus (+)
+                    $('#com-chilipeppr-widget-xyz-ftr .joga').removeClass("hilite");
+                }                
                 that.lastKeydownTime = 0;
             });
 
@@ -1934,7 +1956,16 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 // page down. Z-
                 xyz = "Z";
                 val = -1 * baseval; //0.001;
-            }
+            // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017   <-------------
+            } else if (key == "A-") {
+                // minus (-). A-
+                xyz = "A";
+                val = -1 * baseval; //0.001;
+            } else if (key == "A+") {
+                // minus (+). A+
+                xyz = "A";
+                val = baseval; //0.001;
+            }   
             val = val * mult;
 
             if (xyz.length > 0) {
