@@ -1803,7 +1803,6 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 } else if (key == 34) {
                     // page down
                     $('#com-chilipeppr-widget-xyz-ftr .jogzneg').removeClass("hilite");
-                }
                 // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <---------------
                 } else if (key == 109) {
                     // minus (-)

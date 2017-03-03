@@ -406,10 +406,10 @@ cprequire_test(["inline:com-chilipeppr-widget-xyz"], function (xyz) {
 cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"], function () {
     return {
         id: "com-chilipeppr-widget-xyz",
-        url: "http://raw.githubusercontent.com/chilipeppr/widget-axes/master/auto-generated-widget.html",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
-        fiddleurl: "http://ide.c9.io/chilipeppr/widget-axes", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
-        githuburl: "http://github.com/chilipeppr/widget-axes", // The backing github repo
-        testurl: "http://widget-axes-chilipeppr.c9users.io/widget.html",   // The standalone working widget so can view it working by itself
+        url: "http://raw.githubusercontent.com/Keith-W/widget-axes/master/auto-generated-widget.html",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
+        fiddleurl: "http://ide.c9.io/keithward/chilipeppr_test", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
+        githuburl: "http://github.com/Keith-W/widget-axes", // The backing github repo
+        testurl: "http://chilipeppr_test-keithward.c9users.io/widget.html",   // The standalone working widget so can view it working by itself
         name: "Widget / XYZ Axes v2",
         desc: "The Axes widget shows the XYZA values of the axes of your CNC controller. It also enables you to jog, home, change units, and change Work Coordinate Systems.",
         publish: {},
@@ -1911,7 +1911,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
 
                 // this lets the cnc controller know we started jogging
                 // the controller may or may not care
-                if (!isjogging && evt.which > 30 && evt.which < 41) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if ((!isjogging && evt.which > 30 && evt.which < 41) && (!isjogging && evt.which == 107) && (!isjogging && evt.which ==109)) {
                     isjogging = true;
                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogstart', "");
                 }
@@ -1920,7 +1921,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 that.accelBaseValHilite(evt);
 
                 // if this keydown event does not contain a relevant keypress then just exit
-                if (!(evt.which > 30 && evt.which < 41)) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if (!(evt.which > 30 && evt.which < 41) && !(evt.which == 107) && !(evt.which == 109)) {
                     //console.log("exiting cuz not arrow key. evt:", evt);
                     return;
                 } else {
@@ -1982,8 +1984,20 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                     // page down
                     direction = "Z-";
                     $('#com-chilipeppr-widget-xyz-ftr .jogzneg').addClass("hilite");
+                
+					// Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+				} else if (key == 109) {
+                    // minus(-)
+                    direction = "A-";
+                    $('#com-chilipeppr-widget-xyz-ftr .joganeg').addClass("hilite");
+                
+				} else if (key == 107) {
+                    // plus(+)
+                    direction = "A+";
+                    $('#com-chilipeppr-widget-xyz-ftr .joga').addClass("hilite");
                 }
 
+                
                 if (direction) {
                     //that.jog(direction, isFast, is100xFast, is1000xFast, is10000xFast);
                     that.jog(direction);
@@ -1999,7 +2013,8 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 }
 
                 // test if keys that represent real jog (i.e. not shift/ctrl/alt, etc)
-                if (evt.which > 30 && evt.which < 41) {
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <------------
+                if ((evt.which > 30 && evt.which < 41)||(evt.which == 107)||(evt.which == 109)) {
                     // let parent method know jogging is done
                     isjogging = false;
 
@@ -2029,8 +2044,14 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 } else if (key == 34) {
                     // page down
                     $('#com-chilipeppr-widget-xyz-ftr .jogzneg').removeClass("hilite");
-                }
-
+                // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017  <---------------
+                } else if (key == 109) {
+                    // minus (-)
+                    $('#com-chilipeppr-widget-xyz-ftr .joganeg').removeClass("hilite");
+                } else if (key == 107) {
+                    // plus (+)
+                    $('#com-chilipeppr-widget-xyz-ftr .joga').removeClass("hilite");
+                }                
                 that.lastKeydownTime = 0;
             });
 
@@ -2175,7 +2196,16 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                 // page down. Z-
                 xyz = "Z";
                 val = -1 * baseval; //0.001;
-            }
+            // Update to add button events for A-/+, keys 109 (-) and 107 (+) - RKW 2-8-2017   <-------------
+            } else if (key == "A-") {
+                // minus (-). A-
+                xyz = "A";
+                val = -1 * baseval; //0.001;
+            } else if (key == "A+") {
+                // minus (+). A+
+                xyz = "A";
+                val = baseval; //0.001;
+            }   
             val = val * mult;
 
             if (xyz.length > 0) {
@@ -2245,6 +2275,7 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
 
     }
 });
+
     //]]>
     </script>
 
@@ -2741,6 +2772,12 @@ cpdefine("inline:com-chilipeppr-widget-xyz", ["chilipeppr_ready", "jquerycookie"
                                 <button class="btn btn-default jogzneg ">Z <span class="glyphicon glyphicon-minus-sign"></span>
                                 </button>
                             </div>
+                        </td>
+                        <td>
+                                <div class="btn-group-vertical">
+                                <button class="btn btn-default joga "   >A <span class="glyphicon glyphicon-plus-sign"></span></button>
+                                <button class="btn btn-default joganeg ">A <span class="glyphicon glyphicon-minus-sign"></span></button>
+                                </div>
                         </td>
                         <td class="hidden" style="">
                             <button type="button" class="btn btn-lg btn-default btnShowTouchJog btnToggleShowTouchJog" style="padding:0 10px;">
